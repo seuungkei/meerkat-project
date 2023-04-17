@@ -11,7 +11,7 @@ class userService {
     this.JWT_SECRET = process.env.JWT_SECRET;
   }
 
-  kakaoLogin = async (kakaoToken : string) => {
+  kakaoLogin = async (kakaoToken : string | undefined) => {
     const { data } = await axios.get("https://kapi.kakao.com/v2/user/me", {
       headers: {
         authorization: `Bearer ${kakaoToken}`,
@@ -19,12 +19,16 @@ class userService {
       },
     });
   
-    const nickname = data.properties.nickname;
-    const email = data.kakao_account.email;
-    const socialId = data.id;
+    const nickname: string | undefined = data.properties.nickname;
+    const email: string  | undefined  = data.kakao_account.email;
+    const socialId: string  | undefined  = data.id;
   
+    // const nickname = "Hwiiii";
+    // const email = "kkhhhh940227@gmail.com";
+    // const socialId = "12345672";
+
     const user = await this.Repository.getSocialUser(socialId);
-  
+
     if (!user) {
       const userId = await this.Repository.createUser(nickname, email, socialId);
       const jsonwebtoken = jwt.sign({ id: userId }, this.JWT_SECRET);

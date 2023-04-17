@@ -10,15 +10,15 @@ const SOCIAL_TYPES = Object.freeze({
 
 interface IgetSocialUser {
   "id": number,
-  "nickname": string,
-  "email": string,
-  "social_id": number,
-  "social_type_id": number
+  "nickname": string | null,
+  "email": string | null,
+  "social_id": string | null,
+  "social_type_id": number | null
 }
 
 class userRepository {
-  async createUser(nickname : string, email : string, socialId : number): Promise<number | null> {
-    const createUser = await prisma.users.create({
+  async createUser(nickname : string | undefined, email : string | undefined, socialId : string | undefined): Promise<number> {
+    const createUser = await prisma.user.create({
       data : {
         nickname: nickname,
         email: email,
@@ -26,11 +26,11 @@ class userRepository {
         social_type_id: SOCIAL_TYPES.kakao
       }
     })
-    return createUser.insertId;
+    return createUser.id;
   };
   
-  async getSocialUser(socialId : number): Promise<IgetSocialUser | null> {
-    const getSocialUser: IgetSocialUser | null = await prisma.users.findUnique({
+  async getSocialUser(socialId : string | undefined): Promise<IgetSocialUser | null> {
+    const getSocialUser: IgetSocialUser | null = await prisma.user.findUnique({
       where: {
         social_id: socialId,
       },
@@ -43,24 +43,11 @@ class userRepository {
       },
     })
 
-    console.log("getSocialUser: ",getSocialUser);
-    // const [getSocialUser] = await appDataSource.query(
-    //   `SELECT
-    //     id,
-    //     nickname,
-    //     email,
-    //     social_id,
-    //     social_type_id
-    //   FROM users
-    //   WHERE social_id = ?;
-    //   `,
-    //   [socialId]
-    // );
     return getSocialUser;
   };
   
   async getUserById(userId : number) {
-    const result = await prisma.users.findUnique({
+    const result = await prisma.user.findUnique({
       where: {
         id: userId
       },
@@ -68,19 +55,8 @@ class userRepository {
         id: true,
       },
     })
-    console.log("result: ",result)
+
     return result;
-  //   const [result] = await appDataSource.query(
-  //     `SELECT
-  //           id userId
-  //         FROM
-  //           users
-  //         WHERE
-  //           id = ?;`,
-  //     [userId]
-  //   );
-  //   return result;
-  // };
   }
 }
 
