@@ -6,12 +6,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 class userService {
-  private readonly JWT_SECRET: any;
+  private readonly JWT_SECRET: string | undefined;
   constructor (private Repository: userRepository) {
     this.JWT_SECRET = process.env.JWT_SECRET;
   }
 
   kakaoLogin = async (kakaoToken : string | undefined) => {
+    if(!this.JWT_SECRET) throw new Error('JWT_SECRET must be defined')
+    
     const { data } = await axios.get("https://kapi.kakao.com/v2/user/me", {
       headers: {
         authorization: `Bearer ${kakaoToken}`,
