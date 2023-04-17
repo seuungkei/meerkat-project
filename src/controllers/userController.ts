@@ -8,7 +8,7 @@ class userController {
   kakaoLogin = async (req: Request, res: Response) => {
     const kakaoToken = req.headers.authorization;
   
-    // if (!kakaoToken) throw new Error("KEY_ERROR");
+    // if (!kakaoToken) throw new Error("kakaoToken must be defined");
   
     // const { accessToken, userNickname, status } = await this.Service.kakaoLogin(kakaoToken);
 
