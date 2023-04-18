@@ -17,7 +17,7 @@ interface IgetSocialUser {
 }
 
 class userRepository {
-  async createUser(nickname : string | undefined, email : string | undefined, socialId : string | undefined): Promise<number> {
+  async createUser(nickname: string | undefined, email: string | undefined, socialId: string | undefined): Promise<number> {
     const createUser = await prisma.user.create({
       data : {
         nickname: nickname,
@@ -29,7 +29,7 @@ class userRepository {
     return createUser.id;
   };
   
-  async getSocialUser(socialId : string | undefined): Promise<IgetSocialUser | null> {
+  async getSocialUser(socialId: string | undefined): Promise<IgetSocialUser | null> {
     const getSocialUser: IgetSocialUser | null = await prisma.user.findUnique({
       where: {
         social_id: socialId,
@@ -46,20 +46,21 @@ class userRepository {
     return getSocialUser;
   };
   
-  async getUserById(userId : number) {
+  async getUserById(userId: number) {
     const result = await prisma.user.findUnique({
       where: {
-        id: userId
+        id: userId,
       },
       select: {
         id: true,
       },
-    })
+    });
 
     return result;
-  }
-}
+  };
+};
 
 export {
   userRepository,
+  IgetSocialUser,
 }
