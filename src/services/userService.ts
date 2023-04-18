@@ -11,7 +11,7 @@ class userService {
     this.JWT_SECRET = process.env.JWT_SECRET;
   }
 
-  public kakaoLogin = async (kakaoToken: string | undefined): Promise<{accessToken: string; userNickname: string | null; status: number;}> => {
+  public async kakaoLogin  (kakaoToken: string | undefined): Promise<{accessToken: string; userNickname: string | null; status: number;}> {
     if(!this.JWT_SECRET) throw new Error('JWT_SECRET must be defined');
 
     const {nickname, email, socialId} = await this._getKakaoUserData(kakaoToken);
@@ -20,7 +20,7 @@ class userService {
     return user? await this._ifExistUser(user, this.JWT_SECRET) : await this._ifNotExistUser(nickname, email, socialId, this.JWT_SECRET);
   };
 
-  private _getKakaoUserData = async (kakaoToken: string | undefined): Promise<{nickname: string; email: string; socialId: string;}> => {
+  private async _getKakaoUserData (kakaoToken: string | undefined): Promise<{nickname: string; email: string; socialId: string;}> {
     const { data } = await axios.get("https://kapi.kakao.com/v2/user/me", {
       headers: {
         authorization: `Bearer ${kakaoToken}`,

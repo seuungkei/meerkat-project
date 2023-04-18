@@ -26,6 +26,7 @@ class userRepository {
         social_type_id: SOCIAL_TYPES.kakao
       }
     })
+    
     return createUser.id;
   };
   
