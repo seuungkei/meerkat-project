@@ -1,0 +1,142 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRESQL_DB_URL")
+}
+
+model User {
+  id        Int         @id @default(autoincrement())
+  nickname  String?     @unique @db.VarChar(20)
+  email     String?     @unique @db.VarChar(50)
+  password  String?     @db.VarChar(30)
+  social_id String?     @unique @db.VarChar(30)
+  social_type_id Int?
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+
+  social_type SocialType? @relation(fields: [social_type_id], references: [id])
+  movie_likes MovieLike[]
+  movie_comments MovieComment[]
+  posts Post[]
+  post_likes PostLike[]
+  post_comments PostComment[]
+}
+
+model SocialType {
+id    Int         @id @default(autoincrement())
+name  String      @db.VarChar(10)
+
+users User[]
+}
+
+model Movie {
+  id Int              @id @default(autoincrement())
+  name String         @db.VarChar(100)
+  director String     @db.VarChar(50)
+  actor String
+  category_id Int
+  region_id Int
+  release_date DateTime
+  ratings Int
+  running_time String @db.VarChar(20)
+  video_url String
+  poster_img String
+
+  category Category @relation(fields: [category_id], references: [id])
+  region Region @relation(fields: [region_id], references: [id])
+  movie_likes MovieLike[]
+  movie_comments MovieComment[]
+}
+
+model Category {
+  id Int          @id @default(autoincrement())
+  name String     @db.VarChar(20)
+  movies Movie[]
+  posts Post[]
+}
+
+model Region {
+  id Int @id @default(autoincrement())
+  name String
+
+  moives Movie[]
+}
+
+model MovieLike {
+  id Int @id @default(autoincrement())
+  user_id Int
+  movie_id Int
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+  movie Movie @relation(fields: [movie_id], references: [id])
+}
+
+model MovieComment {
+id Int  @id @default(autoincrement())
+content String @db.VarChar(400)
+user_id Int
+movie_id Int
+created_at DateTime @default(now())
+updated_at DateTime   @updatedAt
+
+user User @relation(fields: [user_id], references: [id])
+movie Movie @relation(fields: [movie_id], references: [id])
+
+}
+
+model Post {
+  id Int  @id @default(autoincrement())
+  title String @db.VarChar(100)
+  content String @db.VarChar(4000)
+  user_id Int
+  category_id Int
+  thumbnail String @db.VarChar(2000)
+  spoiler_info_id Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
+  category Category @relation(fields: [category_id], references: [id])
+  spoiler_info SpoilerInfo @relation(fields: [spoiler_info_id], references: [id])
+
+  likes PostLike[]
+  comments PostComment[]
+}
+
+model SpoilerInfo {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(10)
+
+  posts Post[]
+}
+
+model PostLike {
+  id Int @id @default(autoincrement())
+  user_id Int
+  post_id Int
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+  post Post @relation(fields: [post_id], references: [id])
+
+}
+
+model PostComment {
+  id Int @id @default(autoincrement())
+  content String @db.VarChar(400)
+  user_id Int
+  post_id Int
+  created_at DateTime @default(now())
+  updated_at DateTime   @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
+  post Post @relation(fields: [post_id], references: [id])
+
+}
